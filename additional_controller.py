@@ -1,68 +1,79 @@
+def calculate_close(x):
+    if 0 <= x <= 50:
+        return (-x / 50) + 1
+    return 0
+
+
+def calculate_moderate(x):
+    if 40 <= x <= 50:
+        return (x / 10) - 4
+    if 50 <= x <= 100:
+        return (-x / 50) + 2
+    return 0
+
+
+def calculate_far(x):
+    if 90 <= x <= 200:
+        return (x / 110) - (9 / 11)
+    if x >= 200:
+        return 1
+    return 0
+
+
+def calculate_low_speed(x):
+    if 0 <= x <= 5:
+        return x / 5
+    if 5 <= x <= 10:
+        return (-x / 5) + 2
+    return 0
+
+
+def calculate_medium_speed(x):
+    if 0 <= x <= 15:
+        return x / 15
+    if 15 <= x <= 30:
+        return (-x / 15) + 2
+    return 0
+
+
+def calculate_high_speed(x):
+    if 25 <= x <= 30:
+        return (x / 5) - 5
+    if 30 <= x <= 90:
+        return (-x / 60) + (3 / 2)
+    return 0
+
+
 class FuzzyGasController:
 
     def __init__(self):
-        pass
+        self.high = 0
+        self.medium = 0
+        self.low = 0
 
-    def mem_close(self, x):
-        if 0 <= x < 50:
-            return -x / 50 + 1
-        return 0
+    def max_min(self, x):
+        return max(min(self.low, calculate_low_speed(x)),
+                   min(self.high, calculate_high_speed(x)),
+                   min(self.medium, calculate_medium_speed(x)))
 
-    def mem_moderate(self, x):
-        if 40 <= x < 50:
-            return x / 10 - 4
-        if 50 <= x < 100:
-            return -x / 50 + 2
-        return 0
-
-    def mem_far(self, x):
-        if 90 <= x < 200:
-            return x / 110 - 90 / 110
-        if x >= 200:
-            return 1
-        return 0
-
-    def mem_low_speed(self, x):
-        if 0 <= x < 5:
-            return x / 5
-        if 5 <= x < 10:
-            return -x / 5 + 2
-        return 0
-
-    def mem_medium_speed(self, x):
-        if 0 <= x <= 15:
-            return x / 15
-        if 15 < x <= 30:
-            return -x / 15 + 2
-        return 0
-
-    def mem_high_speed(self, x):
-        if 25 <= x < 30:
-            return x / 5 - 5
-        if 30 <= x < 90:
-            return -x / 60 + 9 / 6
+    def integral(self, start, limit, interval):
+        x = start
+        num = 0
+        den = 0
+        while x < limit:
+            den += self.max_min(x) * interval
+            num += self.max_min(x) * interval * x
+            x += interval
+        if den != 0:
+            return float(num) / float(den)
         return 0
 
     def decide(self, center_dist):
 
-        low = self.mem_close(center_dist)
-        medium = self.mem_moderate(center_dist)
-        high = self.mem_far(center_dist)
+        self.low = calculate_close(center_dist)
+        self.medium = calculate_moderate(center_dist)
+        self.high = calculate_far(center_dist)
 
-        def max_function(x):
-            return max(min(low, self.mem_low_speed(x)),
-                       min(high, self.mem_high_speed(x)),
-                       min(medium, self.mem_medium_speed(x)))
+        return self.integral(0, 90, 0.1)
 
-        x = 0
-        upper_bound = +90
-        makhraj = 0.0
-        soorat = 0.0
-        while x < upper_bound:
-            x = x + 0.1
-            makhraj = makhraj + max_function(x) * 0.1
-            soorat = soorat + max_function(x) * 0.1 * x
-        if makhraj != 0:
-            return float(soorat) / float(makhraj)
-        return 0
 
