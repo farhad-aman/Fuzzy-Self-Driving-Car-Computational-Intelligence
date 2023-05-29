@@ -114,4 +114,4 @@ class FuzzyController:
         self.high_right = min(calculate_close_L(left_dist), calculate_far_R(right_dist))
         self.nothing = min(calculate_moderate_L(left_dist), calculate_moderate_R(right_dist))
 
-        return self.integral(-50, 50, 0.1)
+        return self.integral(-50, 50, 0.01)

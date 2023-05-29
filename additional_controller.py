@@ -74,6 +74,6 @@ class FuzzyGasController:
         self.medium = calculate_moderate(center_dist)
         self.high = calculate_far(center_dist)
 
-        return self.integral(0, 90, 0.1)
+        return self.integral(0, 90, 0.01)
 
 
